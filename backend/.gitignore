@@ -1,0 +1,62 @@
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Build outputs ===
+build/
+out/
+dist/
+*.jar
+*.war
+
+# === Gradle ===
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# === IntelliJ IDEA ===
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# === VS Code ===
+.vscode/
+
+# === NetBeans ===
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# === Eclipse / STS ===
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+# === Logs ===
+*.log
+
+# === Docker ===
+.env
+*.env
+*.pid
+docker-compose.override.yml
+
+# === Node.js / Next.js (frontend) ===
+node_modules/
+.next/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+package-lock.json
+
+# === Test & Coverage ===
+coverage/
+test-output/

@@ -47,6 +47,7 @@ public class AuthService {
 
     }
 
+    @Transactional
     public UserDto verify(VerificationRequestDto dto) {
         verificationService.verifyCode(dto.email, dto.code);
 

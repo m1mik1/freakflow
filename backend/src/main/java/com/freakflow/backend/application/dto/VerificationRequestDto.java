@@ -9,6 +9,7 @@ public class VerificationRequestDto {
     @NotBlank
     public String email;
 
-    @Pattern(regexp="\\d{6}") // ровно 6 цифр
+    @Pattern(regexp = "^[A-Za-z0-9]{6}$",
+            message = "Код має містити рівно 6 літер або цифр")
     public String code;
 }

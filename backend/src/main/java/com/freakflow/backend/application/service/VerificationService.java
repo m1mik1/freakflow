@@ -6,6 +6,7 @@ import com.freakflow.backend.domain.repository.VerificationTokenRepository;
 import com.freakflow.backend.domain.valueobject.EmailAddress;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,19 @@ public class VerificationService {
     private final VerificationTokenRepository tokenRepo;
     private final JavaMailSender mailSender;
 
+    private String generateCode() {
+        String code;
+        do {
+            code = RandomStringUtils.randomAlphanumeric(6);
+            code = code.toUpperCase();
+        } while (!code.matches(".*\\d.*") || !code.matches(".*[A-Z].*"));
+        return code;
+    }
+
     @Transactional
     public void sendVerificationCode(User user) {
-        String code = String.format("%06d", new SecureRandom().nextInt(1_000_000));
-        Instant expires = Instant.now().plus(10, ChronoUnit.MINUTES);
+        String code = generateCode();
+        Instant expires = Instant.now().plus(20, ChronoUnit.MINUTES);
 
         var token = EmailVerificationToken.builder()
                 .user(user)
@@ -52,7 +62,7 @@ public class VerificationService {
                 .filter(t -> t.getExpiresAt().isAfter(Instant.now()));
 
         var token = optToken.orElseThrow(() ->
-                new IllegalArgumentException("Неверный или просроченный код."));
+                new IllegalArgumentException("Невірний чи прострочений код."));
 
         // помечаем пользователя подтверждённым
         User user = token.getUser();

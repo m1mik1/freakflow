@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface VerificationTokenRepository {
     EmailVerificationToken save(EmailVerificationToken token);
-    Optional<EmailVerificationToken> findByUserEmailAndCode(EmailAddress email, String code);
+    Optional<EmailVerificationToken> findByUserAndCode(User user, String code);
     void deleteByUser(User user);
 }

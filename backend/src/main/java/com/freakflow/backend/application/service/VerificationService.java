@@ -2,6 +2,7 @@ package com.freakflow.backend.application.service;
 
 import com.freakflow.backend.domain.model.EmailVerificationToken;
 import com.freakflow.backend.domain.model.User;
+import com.freakflow.backend.domain.repository.UserRepository;
 import com.freakflow.backend.domain.repository.VerificationTokenRepository;
 import com.freakflow.backend.domain.valueobject.EmailAddress;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -20,8 +20,9 @@ import java.time.temporal.ChronoUnit;
 @Service
 @RequiredArgsConstructor
 public class VerificationService {
-    private final VerificationTokenRepository tokenRepo;
+    private final VerificationTokenRepository tokenRepository;
     private final JavaMailSender mailSender;
+    private final UserRepository userRepository;
 
     private String generateCode() {
         String code;
@@ -34,6 +35,9 @@ public class VerificationService {
 
     @Transactional
     public void sendVerificationCode(User user) {
+
+        tokenRepository.deleteByUser(user);
+
         String code = generateCode();
         Instant expires = Instant.now().plus(20, ChronoUnit.MINUTES);
 
@@ -43,7 +47,7 @@ public class VerificationService {
                 .createdAt(Instant.now())
                 .expiresAt(expires)
                 .build();
-        tokenRepo.save(token);
+        tokenRepository.save(token);
 
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(user.getEmail().getValue());
@@ -57,19 +61,29 @@ public class VerificationService {
     @Transactional
     public void verifyCode(String emailstr, String code) {
         EmailAddress email = new EmailAddress(emailstr);
-        var optToken = tokenRepo
-                .findByUserEmailAndCode(email, code)
-                .filter(t -> t.getExpiresAt().isAfter(Instant.now()));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        var token = tokenRepository.findByUserAndCode(user, code)
+                .filter(t -> t.getExpiresAt().isAfter(Instant.now()))
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Невірний чи прострочений код.")
+                );
 
-        var token = optToken.orElseThrow(() ->
-                new IllegalArgumentException("Невірний чи прострочений код."));
+        user.setEnabled(true);
+        tokenRepository.deleteByUser(user);
 
-        // помечаем пользователя подтверждённым
-        User user = token.getUser();
-        user.markEmailVerified();
+    }
 
-        // удаляем старые токены
-        tokenRepo.deleteByUser(user);
+    @Transactional
+    public void resendCode(String emailstr) {
+        EmailAddress email = new EmailAddress(emailstr);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->  new IllegalArgumentException("User not found"));
+        if (user.isEnabled()){
+            throw new IllegalStateException("Already verified");
+        }
+        tokenRepository.deleteByUser(user);
+        sendVerificationCode(user);
     }
 }
 

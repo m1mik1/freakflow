@@ -2,6 +2,8 @@ package com.freakflow.backend.domain.valueobject;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+
+import java.text.Normalizer;
 import java.util.Objects;
 
 @Embeddable
@@ -17,12 +19,18 @@ public class Slug {
 
 
     public static Slug from(String title) {
-        String raw = Objects.requireNonNull(title, "title must not be null")
-                .toLowerCase().trim()
-                .replaceAll("[^a-z0-9]+", "-")
+        Objects.requireNonNull(title, "title must not be null");
+        // Нормализуем строку, убираем диакритические знаки
+        String normalized = Normalizer.normalize(title, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        // Приводим к нижнему регистру и обрезаем пробелы
+        String lower = normalized.toLowerCase().trim();
+        // Заменяем все непробельные последовательности, не являющиеся буквами или цифрами, на дефис
+        String raw = lower
+                .replaceAll("[^\\p{IsAlphabetic}\\p{IsDigit}]+", "-")
                 .replaceAll("(^-+)|(-+$)", "");
         if (raw.isEmpty()) {
-            throw new IllegalArgumentException("Cannot generate slug from empty title");
+            throw new IllegalArgumentException("Cannot generate slug from title: '" + title + "'");
         }
         return new Slug(raw);
     }

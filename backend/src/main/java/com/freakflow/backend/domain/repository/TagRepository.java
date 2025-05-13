@@ -11,8 +11,7 @@ public interface TagRepository {
     Optional<Tag> findById(Long id);
     Optional<Tag> findByName_Value(String value);
     Page<Tag> findByQuestionsId(Long questionId, Pageable pageable);
-    long countByQuestionsId(Long questionId);
-    boolean existsByName(String name);
+    boolean existsByName_Value(String value);
     Tag save(Tag tag);
     void delete(Tag tag);
 }

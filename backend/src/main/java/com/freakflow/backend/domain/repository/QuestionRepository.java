@@ -13,8 +13,10 @@ public interface QuestionRepository {
     Page<Question> findAll(Pageable pageable);
     Page<Question> findByTagsName(String tagName, Pageable pageable);
     Page<Question> findByAuthor(User author, Pageable pageable);
-    Page<Question> searchByTitleOrBody(String query, Pageable pageable);
     Optional<Question> findById(Long id);
+
+    long countByTags_Id(Long tagId);
+
     Optional<Question> findBySlugValue(String slugValue);
     Question save(Question question);
     void delete(Question question);

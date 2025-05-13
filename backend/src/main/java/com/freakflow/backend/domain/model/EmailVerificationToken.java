@@ -22,7 +22,7 @@ public class EmailVerificationToken {
     private String code;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id",unique = true, nullable = false)
     private User user;
 
     @Column(nullable = false)

@@ -116,7 +116,4 @@ public class User {
         this.updatedAt = Instant.now();
     }
 
-    public void markEmailVerified() {
-        enabled = true;
-    }
 }

@@ -29,6 +29,7 @@ public class TagService {
     public Page<TagResponse> listTags(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("name.value").ascending());
+
         Page<Tag> tags = tagRepository.findAll(pageable) ;
 
         Page<TagResponse> dtoPage = tags.map(tag -> {

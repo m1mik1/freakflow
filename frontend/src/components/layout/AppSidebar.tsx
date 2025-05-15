@@ -22,7 +22,7 @@ export default function AppSidebar() {
         <SidebarContent className="p-2 space-y-4">
           <SidebarGroup>
             <SidebarGroupLabel className="text-sm font-semibold text-gray-500">
-              Навігація
+              Navigation
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-2">

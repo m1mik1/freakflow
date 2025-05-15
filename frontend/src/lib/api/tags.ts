@@ -1,5 +1,5 @@
 // src/lib/api/tags.ts
-import { api } from "./auth";
+import { api } from "./api";
 
 /**
  * Ответ от сервера по одному тегу

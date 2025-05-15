@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   db:
     image: postgres:15
@@ -13,5 +12,22 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  app:
+    image: your-backend-image:latest
+    container_name: freakflow-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/freakdb
+      SPRING_DATASOURCE_USERNAME: freak
+      SPRING_DATASOURCE_PASSWORD: freakpass
+      APP_UPLOAD_DIR: /app/uploads/avatars
+      APP_BASE_URL: http://localhost:8080
+    volumes:
+      - avatars-data:/app/uploads/avatars
+
 volumes:
   pgdata:
+  avatars-data:

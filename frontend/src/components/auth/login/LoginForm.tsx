@@ -8,7 +8,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { loginUser } from '@/lib/api/auth';
-import { api } from '@/lib/api/auth'  
+import { api } from '@/lib/api/api'  
 import { useRouter } from 'next/navigation'
 
 
@@ -30,24 +30,23 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   const onSubmit = async (data: { email: string; password: string }) => {
     setServerError(null);
     try {
-        const res = await loginUser(data)
+      const res = await loginUser(data)
       const token = res.data.accessToken 
 
       localStorage.setItem('accessToken', token)
-
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`
       
       onSuccess();
       router.push('/questions')
     } catch (err: any) {
-      // Обработка ошибок от сервера
+      // Server error handling
       if (err.response) {
         if (err.response.status === 400) {
-          setServerError('Невірний email або пароль');
+          setServerError('Invalid email or password');
         } else if (err.response.data?.message) {
           setServerError(err.response.data.message);
         } else {
-          setServerError('Сталася помилка, спробуйте пізніше');
+          setServerError('An error occurred, please try again later');
         }
       } else {
         setServerError(err.message || 'Login failed');
@@ -55,7 +54,6 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     }
   };
     
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -66,7 +64,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       <div className="relative">
         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-lime-400" />
         <Input
-          {...register('email', { required: 'Email обов’язковий' })}
+          {...register('email', { required: 'Email is required' })}
           type="email"
           placeholder="you@example.com"
           className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
@@ -78,9 +76,9 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       <div className="relative">
         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-lime-400" />
         <Input
-          {...register('password', { required: 'Пароль обов’язковий' })}
+          {...register('password', { required: 'Password is required' })}
           type={showPassword ? 'text' : 'password'}
-          placeholder="Пароль"
+          placeholder="Password"
           className={`pl-10 pr-10 ${errors.password ? 'border-red-500' : ''}`}
         />
         {showPassword ? (
@@ -106,14 +104,14 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         disabled={!isValid || isSubmitting}
         className="w-full bg-lime-400 hover:bg-lime-300 text-white rounded-full py-2 disabled:opacity-50"
       >
-        {isSubmitting ? 'Увійти...' : 'Увійти'}
+        {isSubmitting ? 'Logging in...' : 'Log In'}
       </Button>
 
       {/* Register Link */}
       <p className="text-center text-sm">
-        Немає акаунту?{' '}
+        Don’t have an account?{' '}
         <Link href="/register" className="text-lime-600 font-medium hover:underline">
-          Зареєструватися
+          Register
         </Link>
       </p>
     </form>

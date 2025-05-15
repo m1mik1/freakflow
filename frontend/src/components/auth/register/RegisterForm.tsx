@@ -102,18 +102,17 @@ export default function RegisterForm() {
       setPending(true)
     } catch (err: any) {
       const status = err.response?.status
-      const msg = err.response?.data?.error || err.response?.data?.message || 'Помилка'
+      const msg = err.response?.data?.error || err.response?.data?.message || 'Error'
       if ((status === 409 || status === 400) && msg.includes('Pending') && !pending) {
         setVerifyOpen(true); setCooldown(60); setPending(true)
         return
       }
       if (msg === 'Email already exists') {
-        setFormError('email', { message: 'Електронну пошту вже використано' })
+        setFormError('email', { message: 'Email already in use' })
       } else if (msg === 'Name already exists') {
-        setFormError('name', { message: 'Ім’я вже зайнято' })
+        setFormError('name', { message: 'Name already taken' })
       } else {
-
-        setFormError('root', { message: 'Сталася помилка: ' + msg })
+        setFormError('root', { message: 'An error occurred: ' + msg })
       }
     }
   }
@@ -121,11 +120,11 @@ export default function RegisterForm() {
   const onVerify = async () => {
     try {
       await verifyCode({ email, code: otp })
-      toast.success('Акаунт підтверджено!')
+      toast.success('Account verified!')
       setTimeout(() => router.push('/?login=true'), 1200)
       reset()
     } catch (err: any) {
-      setError(err.response?.data?.error ?? 'Невірний код')
+      setError(err.response?.data?.error ?? 'Invalid code')
     }
   }
 
@@ -135,7 +134,7 @@ export default function RegisterForm() {
       await resendCode({ email })
       setCooldown(60)
     } catch {
-      setError('Не вдалося надіслати код')
+      setError('Failed to send code')
     } finally {
       setResendLoading(false)
     }
@@ -152,7 +151,7 @@ export default function RegisterForm() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative flex flex-col md:flex-row w-full max-w-4xl mx-auto bg-white rounded-xl mt-14 shadow-md overflow-hidden border-2 border-lime-300"
+          className="relative flex flex-col md:flex-row w-full max-w-250 mx-auto bg-white rounded-xl mt-14 shadow-md overflow-hidden border-2 border-lime-300"
         >
           {/* Иллюстрация + полупрозрачный оверлей пункт 10 */}
           <div className="md:w-1/2 relative p-6 bg-lime-300    flex items-center justify-center">
@@ -177,11 +176,11 @@ export default function RegisterForm() {
                     transition={{ duration: 0.5 }}
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-1 text-center">Крок 1 із 2</p>
+                <p className="text-xs text-gray-500 mt-1 text-center">Step 1 of 2</p>
               </div>
             </div>
             <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">
-              Реєстрація в FreakFlow
+              Sign Up for FreakFlow
             </h2>
 
             <Form {...form}>
@@ -189,11 +188,11 @@ export default function RegisterForm() {
                 {/* Name */}
                 <FormField name="name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Ім'я</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
                       <motion.div whileFocus={{ scale: 1.02 }} className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                        <Input {...field} placeholder="Ваше ім'я" className="pl-10" />
+                        <Input {...field} placeholder="Your name" className="pl-10" />
                       </motion.div>
                     </FormControl>
                     <FormMessage />
@@ -212,7 +211,7 @@ export default function RegisterForm() {
                     </FormControl>
                     <FormMessage>
                       {field.value && !formState.errors.email && (
-                        <span className="text-sm text-green-600">✓ Email валідний</span>
+                        <span className="text-sm text-green-600">✓ Valid email</span>
                       )}
                     </FormMessage>
                   </FormItem>
@@ -221,14 +220,14 @@ export default function RegisterForm() {
                 {/* Password */}
                 <FormField name="password" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Пароль</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <motion.div whileFocus={{ scale: 1.02 }} className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         <Input
                           {...field}
                           type={showPwd ? 'text' : 'password'}
-                          placeholder="Пароль"
+                          placeholder="Password"
                           className="pl-10 pr-10"
                         />
                         <button
@@ -240,7 +239,6 @@ export default function RegisterForm() {
                         </button>
                       </motion.div>
                     </FormControl>
-                    {/* шкала силы */}
                     {pwd && (
                       <div className="mt-1 h-2 w-full bg-gray-200 rounded-full overflow-hidden">
                         <div className={cn('h-full transition-all', barColor)} style={{ width: `${(strength / 4) * 100}%` }} />
@@ -248,7 +246,7 @@ export default function RegisterForm() {
                     )}
                     <FormMessage>
                       {field.value && strength >= 3 && (
-                        <span className="text-sm text-green-600">✓ Достатньо складний</span>
+                        <span className="text-sm text-green-600">✓ Strong enough</span>
                       )}
                     </FormMessage>
                   </FormItem>
@@ -257,14 +255,14 @@ export default function RegisterForm() {
                 {/* Confirm */}
                 <FormField name="confirmPassword" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Підтвердіть пароль</FormLabel>
+                    <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
                       <motion.div whileFocus={{ scale: 1.02 }} className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         <Input
                           {...field}
                           type={showConfirm ? 'text' : 'password'}
-                          placeholder="Підтвердіть пароль"
+                          placeholder="Confirm Password"
                           className="pl-10 pr-10"
                         />
                         <button
@@ -294,19 +292,19 @@ export default function RegisterForm() {
                   className="w-full py-2 text-white font-semibold rounded-lg bg-lime-400 hover:bg-lime-500 transition"
                 >
                   {formState.isSubmitting
-                    ? 'Завантаження…'
+                    ? 'Loading…'
                     : pending
                       ? verifyOpen
-                        ? 'Очікуємо верифікацію…'
-                        : `Повторити через ${regCooldown}s`
-                      : 'Зареєструватися'}
+                        ? 'Awaiting verification…'
+                        : `Retry in ${regCooldown}s`
+                      : 'Register'}
                 </Button>
 
                 {/* Пункт 3: ссылка на логин */}
                 <p className="text-center text-sm text-gray-600">
-                  Уже є акаунт?{' '}
+                  Already have an account?{' '}
                   <a href="/?login=true" className="text-lime-600 hover:underline">
-                    Увійти
+                    Sign In
                   </a>
                 </p>
               </form>
@@ -328,22 +326,22 @@ export default function RegisterForm() {
       >
         <DialogContent className="max-w-md rounded-2xl p-8 shadow-xl">
           <div className="flex justify-center space-x-2 mb-1">
-          <div >
-                <div className="h-2 w-full rounded-full bg-lime-100 overflow-hidden">
-                  <motion.div
-                    className="h-full bg-lime-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 0.5 }}
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1 text-center">Крок 2 із 2</p>
+            <div>
+              <div className="h-2 w-full rounded-full bg-lime-100 overflow-hidden">
+                <motion.div
+                  className="h-full bg-lime-500"
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 0.5 }}
+                />
               </div>
+              <p className="text-xs text-gray-500 mt-1 text-center">Step 2 of 2</p>
+            </div>
           </div>
           <DialogHeader className=" flex justify-center">
-            <DialogTitle className="text-2xl text-center">Підтвердіть e-mail</DialogTitle>
+            <DialogTitle className="text-2xl text-center">Verify Email</DialogTitle>
             <DialogDescription className='text-center'>
-              Ми надіслали код на <span className="font-medium">{email}</span>
+              We've sent a code to <span className="font-medium">{email}</span>
             </DialogDescription>
           </DialogHeader>
 
@@ -377,7 +375,7 @@ export default function RegisterForm() {
             onClick={onVerify}
             className="w-full mb-2 bg-gradient-to-r from-lime-300 to-lime-400 hover:opacity-90"
           >
-            Підтвердити
+            Verify
           </Button>
           <Button
             type="button"
@@ -387,10 +385,10 @@ export default function RegisterForm() {
             className="w-full"
           >
             {resendLoading
-              ? 'Надсилаємо…'
+              ? 'Sending…'
               : cooldown > 0
-                ? `Надіслати ще раз (${cooldown})`
-                : 'Надіслати код ще раз'}
+                ? `Resend code (${cooldown})`
+                : 'Resend code'}
           </Button>
         </DialogContent>
       </Dialog>

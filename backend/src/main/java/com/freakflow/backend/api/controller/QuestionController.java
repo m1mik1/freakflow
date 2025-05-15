@@ -4,8 +4,10 @@ import com.freakflow.backend.application.dto.request.QuestionCreateRequest;
 import com.freakflow.backend.application.dto.response.QuestionResponse;
 import com.freakflow.backend.application.dto.response.QuestionSummaryResponse;
 import com.freakflow.backend.application.dto.response.QuestionSearchResponse;
+import com.freakflow.backend.application.dto.response.QuestionsInfoResponse;
 import com.freakflow.backend.application.service.QuestionService;
 import com.freakflow.backend.domain.model.User;
+import com.freakflow.backend.infrastructure.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +27,15 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @GetMapping
-    public Page<QuestionSummaryResponse> getQuestions(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String tag) {
-        return questionService.listQuestions(page, size, tag);
+    public Page<QuestionSummaryResponse> getQuestions(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,   @RequestParam(required = false) String sortBy,
+                                                      @RequestParam(required = false) String filter) {
+        return questionService.listQuestions(page, size,sortBy,filter);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<QuestionsInfoResponse> search(){
+        QuestionsInfoResponse result = questionService.getQuestionsInfo();
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}/{slug}")
@@ -65,13 +74,15 @@ public class QuestionController {
         return ResponseEntity.ok(result);
     }
 
+
+
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<QuestionResponse> createQuestion(
-            @AuthenticationPrincipal User currentUser,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
             @Valid @RequestBody QuestionCreateRequest dto
     ) {
-        QuestionResponse created = questionService.createQuestion(currentUser, dto);
+        QuestionResponse created = questionService.createQuestion(currentUser.getId(), dto);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")

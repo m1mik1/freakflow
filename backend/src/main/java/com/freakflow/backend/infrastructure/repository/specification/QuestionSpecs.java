@@ -2,10 +2,7 @@ package com.freakflow.backend.infrastructure.repository.specification;
 
 import com.freakflow.backend.domain.model.Question;
 import com.freakflow.backend.domain.model.Tag;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -20,23 +17,16 @@ public final class QuestionSpecs  {
             );
         };
     }
-    public static Specification<Question> hasAllTags(List<String> tagsFilter) {
+    public static Specification<Question> hasAnyTag(List<String> tagNames) {
         return (root, query, cb) -> {
-            // join с таблицей тегов
-            Join<Question, Tag> tags = root.join("tags", JoinType.INNER);
-            // подзапрос: считаем, сколько из нужных тегов есть у вопроса
-            Subquery<Long> sq = query.subquery(Long.class);
-            Root<Question> sqRoot = sq.from(Question.class);
-            Join<Question,Tag> sqTags = sqRoot.join("tags", JoinType.INNER);
-
-            sq.select(cb.count(sqTags))
-                    .where(
-                            cb.equal(sqRoot.get("id"), root.get("id")),
-                            sqTags.get("name").get("value").in(tagsFilter)
-                    );
-
-            // сравниваем: число найденных тегов == размер списка
-            return cb.equal(sq, (long) tagsFilter.size());
+            // Чтобы не дублировать Question при JOIN, указываем distinct
+            query.distinct(true);
+            // JOIN к таблице tags по коллекции tags в Question
+            Join<Question, Tag> tags = root.join("tags");
+            // Path к строковому полю внутри Embeddable:
+            Path<String> nameValue = tags.get("name").get("value");
+            // условие "имя тега IN (:tagNames)"
+            return nameValue.in(tagNames);
         };
     }
 }

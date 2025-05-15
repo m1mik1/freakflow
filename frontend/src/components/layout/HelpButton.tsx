@@ -26,9 +26,9 @@ export default function HelpButton() {
       </DialogTrigger>
       <DialogContent className="max-w-sm rounded-2xl p-6">
         <DialogHeader>
-          <DialogTitle>Підтримка</DialogTitle>
+          <DialogTitle>Support</DialogTitle>
           <DialogDescription className="mb-4">
-            Якщо у вас виникли питання або потрібна допомога, напишіть нам на email:
+            If you have any questions or need assistance, please email us at:
           </DialogDescription>
         </DialogHeader>
         <p className="text-sm">

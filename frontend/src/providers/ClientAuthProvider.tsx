@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { api } from '@/lib/api/auth'
+import { api } from '@/lib/api/api'
 import { useRouter } from 'next/navigation'
 
 export default function ClientAuthProvider({ children }: { children: React.ReactNode }) {

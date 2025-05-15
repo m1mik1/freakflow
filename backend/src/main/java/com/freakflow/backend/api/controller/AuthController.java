@@ -6,7 +6,7 @@ import com.freakflow.backend.application.dto.request.VerificationRequest;
 import com.freakflow.backend.application.dto.request.VerificationResendRequest;
 import com.freakflow.backend.application.dto.response.AuthLoginResponse;
 import com.freakflow.backend.application.dto.response.AuthRegisterResponse;
-import com.freakflow.backend.application.dto.response.UserResponse;
+import com.freakflow.backend.application.dto.response.UserVerifyResponse;
 import com.freakflow.backend.application.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify")
-    public UserResponse verify(@Valid @RequestBody VerificationRequest dto) {
+    public UserVerifyResponse verify(@Valid @RequestBody VerificationRequest dto) {
         return authService.verify(dto);
     }
 

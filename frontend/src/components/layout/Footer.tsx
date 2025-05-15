@@ -1,8 +1,11 @@
+// src/components/layout/Footer.tsx
 'use client';
 
 import Link from 'next/link';
 
 export default function Footer() {
+  const year = new Date().getFullYear();
+
   return (
     <footer className="bg-white border-t border-lime-200 py-3 text-sm text-gray-500">
       <div className="container mx-auto px-4 flex items-center justify-center space-x-1">
@@ -19,10 +22,12 @@ export default function Footer() {
           href="mailto:rostikpastusenko2@gmail.com"
           className="hover:text-lime-600 transition"
         >
-          Підтримка
+          Support
         </Link>
       </div>
-      <p className="container mx-auto px-4 mt-1 text-center">© {new Date().getFullYear()} FreakFlow</p>
+      <p className="container mx-auto px-4 mt-1 text-center">
+        © {year} FreakFlow
+      </p>
     </footer>
   );
 }

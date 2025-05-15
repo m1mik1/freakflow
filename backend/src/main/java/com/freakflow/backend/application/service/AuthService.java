@@ -5,7 +5,7 @@ import com.freakflow.backend.application.dto.request.AuthRegisterRequest;
 import com.freakflow.backend.application.dto.request.VerificationRequest;
 import com.freakflow.backend.application.dto.response.AuthLoginResponse;
 import com.freakflow.backend.application.dto.response.AuthRegisterResponse;
-import com.freakflow.backend.application.dto.response.UserResponse;
+import com.freakflow.backend.application.dto.response.UserVerifyResponse;
 import com.freakflow.backend.domain.model.User;
 import com.freakflow.backend.domain.repository.UserRepository;
 import com.freakflow.backend.domain.valueobject.EmailAddress;
@@ -78,17 +78,17 @@ public class AuthService {
     }
 
     @Transactional
-    public UserResponse verify(VerificationRequest dto) {
+    public UserVerifyResponse verify(VerificationRequest dto) {
         verificationService.verifyCode(dto.email, dto.code);
 
         EmailAddress email = new EmailAddress(dto.email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found."));
 
-        UserResponse userResponse = new UserResponse();
-        userResponse.id = user.getId();
-        userResponse.name = user.getName();
-        userResponse.email = dto.email;
-        return userResponse;
+        UserVerifyResponse userVerifyResponse = new UserVerifyResponse();
+        userVerifyResponse.id = user.getId();
+        userVerifyResponse.name = user.getName();
+        userVerifyResponse.email = dto.email;
+        return userVerifyResponse;
     }
 
     @Transactional(readOnly = true)

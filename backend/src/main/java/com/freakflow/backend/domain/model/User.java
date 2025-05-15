@@ -36,6 +36,22 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
+    @Column(name = "avatar_url", nullable = false, length = 500)
+    private String avatarUrl = "/static/default-avatar.svg";
+
+    @Column( length = 255)
+    private String headline;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Column( length = 255)
+    private String githubUrl;
+
+    @Column(name = "last_name_change_at")
+    private Instant lastNameChangeAt;
+
+
     @Embedded
     @AttributeOverrides({@AttributeOverride(name ="value", column = @Column(name = "reputation",nullable = false))})
     private Reputation reputation= new Reputation(0);

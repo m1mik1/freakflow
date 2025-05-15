@@ -14,9 +14,11 @@ public interface QuestionRepository {
     Page<Question> findByTagsName(String tagName, Pageable pageable);
     Page<Question> findByAuthor(User author, Pageable pageable);
     Optional<Question> findById(Long id);
+    Page<Question> findByAnswersIsEmpty(Pageable pageable);
 
+    long count();
+    long countByAnswersIsEmpty();
     long countByTags_Id(Long tagId);
-
     Optional<Question> findBySlugValue(String slugValue);
     Question save(Question question);
     void delete(Question question);

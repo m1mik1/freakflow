@@ -1,31 +1,26 @@
-// src/lib/formSchemas.ts
 import { z } from 'zod'
 
 export const registerSchema = z
   .object({
-    
     name: z
       .string()
-      .min(2, "Ім'я мінімум 2 символи")
-      .regex(/^[A-Za-z]+$/, 'Нікнейм має містити лише латинські літери'),
-    // Перевірка email
+      .min(2, "Name must be at least 2 characters")
+      .regex(/^[A-Za-z]+$/, "Name can only contain Latin letters"),
     email: z
       .string()
-      .email('Невірний формат email'),
-    // Надійний пароль: мінімум 8 символів, великі, малі літери, цифри та спецсимволи
+      .email("Invalid email format"),
     password: z
       .string()
-      .min(8, 'Пароль мінімум 8 символів')
+      .min(8, "Password must be at least 8 characters")
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/,
-        'Пароль повинен містити великі, малі літери, цифри та спеціальні символи'
+        "Password must include uppercase, lowercase, number, and special character"
       ),
     confirmPassword: z.string(),
   })
-  // Перевіряємо, що пароль і підтвердження співпадають
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Паролі не співпадають',
-    path: ['confirmPassword'],
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
   })
 
 export type RegisterFormValues = z.infer<typeof registerSchema>

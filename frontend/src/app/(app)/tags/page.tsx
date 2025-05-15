@@ -12,7 +12,7 @@ import {
   TagResponse,
 } from '@/lib/api/tags'
 import TagsList from '@/components/tag/TagList'
-import TagsPagination from '@/components/tag/TagsPagination'
+import Pagination from '@/components/layout/Pagination'
 import { Input } from '@/components/ui/input'
 
 export default function TagsPage() {
@@ -94,7 +94,7 @@ export default function TagsPage() {
 
       {/* пагинация показываем ТОЛЬКО когда фильтр пуст */}
       {!filter && data?.totalPages! > 1 && (
-        <TagsPagination
+        <Pagination
           currentPage={currentPage}
           totalPages={data!.totalPages}
           hrefFor={hrefFor}
